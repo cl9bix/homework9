@@ -1,0 +1,104 @@
+contacts = {}
+
+
+def add_contact(name, phone_number):
+    contacts[name] = phone_number
+    print(f'Person {name} with phone number {phone_number} saved.')
+
+
+def phone(name):
+    if name in contacts:
+        print(f'Phone number for user {name}: {contacts[name]}')
+    else:
+        print(f'Contact with name: {name} is not found!')
+
+
+def change(name, new_phone_number):
+    if name in contacts:
+        contacts[name] = new_phone_number
+        print(f'Phone number for user {name} is changed to {new_phone_number}.')
+    else:
+        print(f'User with name: {name} is not found!')
+
+
+def showall():
+    print('List of all contacts:')
+    for name, phone_number in contacts.items():
+        print(f'{name}: {phone_number}')
+
+
+def input_error(func):
+    def inner(*args):
+        try:
+            return func(*args)
+        except IndexError:
+            return "Not enough params. Print help"
+    return inner
+
+
+def hello(*args):
+    return 'How can I help you?'
+
+
+@input_error
+def add(*args):
+    params = args[0].split()
+    name = params[0]
+    phone = params[1]
+    add_contact(name, phone)
+    return f'{name} phone {phone}'
+
+
+def exit(*args):
+    return 'Goodbye!'
+
+
+def goodbye(*args):
+    return 'Goodbye!'
+
+
+def close(*args):
+    return 'Goodbye!'
+
+
+def no_command(*args):
+    return 'Unknown command, try again!'
+
+
+COMMANDS = {hello: 'hello',
+            add: 'add',
+            change: 'change',
+            phone: 'phone',
+            showall: 'show all',
+            goodbye: 'goodbye',
+            close: 'close',
+            exit: 'exit'
+            }
+
+
+def command_handler(text):
+    for command, kword in COMMANDS.items():
+        if text.startswith(kword):
+            return command, text.replace(kword, '').strip()
+    return no_command, None
+
+
+def main():
+    while True:
+        user_input = input('>>>')
+        command, data = command_handler(user_input)
+        print(command.__name__)
+        print(data)
+        if command == exit:
+            print(command())
+            break
+        elif command == no_command:
+            print(command())
+        elif data is not None:
+            print(command(data))
+        else:
+            print(command())
+
+
+if __name__ == '__main__':
+    main()
